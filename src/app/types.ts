@@ -125,6 +125,13 @@ export interface Analytics {
   topPerformingMethods: Record<string, number>;
 }
 
+export interface Treatment {
+  id: string;
+  name: string;
+  basePrice: number;
+  duration: string;
+}
+
 export interface NetworkNode {
   id: string;
   name: string;

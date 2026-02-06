@@ -19,20 +19,14 @@ import {
   Check
 } from 'lucide-react';
 import { toast } from 'sonner';
-
-const TREATMENTS = [
-  { id: 'botox', name: 'Botox', basePrice: 400, duration: '30 min' },
-  { id: 'filler', name: 'Dermal Fillers', basePrice: 600, duration: '45 min' },
-  { id: 'laser', name: 'Laser Treatment', basePrice: 350, duration: '60 min' },
-  { id: 'facial', name: 'HydraFacial', basePrice: 250, duration: '45 min' },
-  { id: 'prp', name: 'PRP Therapy', basePrice: 500, duration: '60 min' },
-];
+import type { Treatment } from '@/app/types';
 
 export function GroupBooking() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [groupSize, setGroupSize] = useState(2);
-  const [selectedTreatment, setSelectedTreatment] = useState(TREATMENTS[0]);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [friends, setFriends] = useState<string[]>(['', '']);
@@ -43,10 +37,26 @@ export function GroupBooking() {
   useEffect(() => {
     if (!user) {
       navigate('/login');
+      return;
     }
+
+    const loadTreatments = async () => {
+      try {
+        const data = await api.getTreatments(user.medSpaId || 'medspa:default');
+        setTreatments(data);
+        if (data.length > 0) {
+          setSelectedTreatment(data[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load treatments:', error);
+        toast.error('Failed to load available treatments');
+      }
+    };
+
+    loadTreatments();
   }, [user, navigate]);
 
-  if (!user) return null;
+  if (!user || !selectedTreatment) return null;
 
   const getDiscount = (size: number): number => {
     if (size === 2) return 0.25;
@@ -197,7 +207,7 @@ export function GroupBooking() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {TREATMENTS.map((treatment) => (
+                  {treatments.map((treatment) => (
                     <button
                       key={treatment.id}
                       onClick={() => setSelectedTreatment(treatment)}

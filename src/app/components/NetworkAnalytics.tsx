@@ -189,13 +189,30 @@ export function NetworkAnalytics() {
     { name: 'SMS', value: referrals.filter(r => r.method === 'sms').length },
   ].filter(d => d.value > 0);
 
-  // Sample time series data (would come from backend in production)
-  const timeSeriesData = [
-    { month: 'Jan', referrals: 5, bookings: 2 },
-    { month: 'Feb', referrals: 8, bookings: 4 },
-    { month: 'Mar', referrals: 12, bookings: 7 },
-    { month: 'Apr', referrals: 15, bookings: 9 },
-  ];
+  // Generate time series data from referrals
+  const timeSeriesData = (() => {
+    const data: Record<string, { referrals: number, bookings: number }> = {};
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    referrals.forEach(ref => {
+        const date = new Date(ref.createdAt);
+        const key = date.toLocaleString('default', { month: 'short' }); // e.g., "Jan"
+        
+        if (!data[key]) data[key] = { referrals: 0, bookings: 0 };
+        data[key].referrals++;
+        
+        if (ref.status === 'booked' || ref.status === 'completed') {
+            const bookDate = ref.bookedAt ? new Date(ref.bookedAt) : date;
+            const bookKey = bookDate.toLocaleString('default', { month: 'short' });
+            if (!data[bookKey]) data[bookKey] = { referrals: 0, bookings: 0 };
+            data[bookKey].bookings++;
+        }
+    });
+
+    return Object.entries(data)
+        .map(([month, stats]) => ({ month, ...stats }))
+        .sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
+  })();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">

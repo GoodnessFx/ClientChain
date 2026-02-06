@@ -115,6 +115,13 @@ export class ApiClient {
     return this.handleResponse(response);
   }
 
+  async getTreatments(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/treatments`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
   // Users
   async getUser(id: string) {
     const response = await fetch(`${API_BASE_URL}/users/${id}`, {
@@ -393,6 +400,51 @@ export class ApiClient {
       method: 'PUT',
       headers: this.getHeaders(),
       body: JSON.stringify(config),
+    });
+    return this.handleResponse(response);
+  }
+
+  // --- MISSING ADMIN METHODS ---
+  // getMedSpaAnalytics and getMedSpaCampaigns are already defined above.
+
+  async getMedSpaCorporateEngagement(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/corporate`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getRecentInvoices(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/invoices`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getCorporatePartners(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/partners`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getMedSpaEvents(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/events`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getSocialMentions(medSpaId: string) {
+    const response = await fetch(`${API_BASE_URL}/medspas/${medSpaId}/mentions`, {
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
+
+  async getSystemStatus() {
+    const response = await fetch(`${API_BASE_URL}/system/status`, {
+      headers: this.getHeaders(),
     });
     return this.handleResponse(response);
   }

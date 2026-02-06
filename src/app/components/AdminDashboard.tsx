@@ -112,7 +112,7 @@ export function AdminDashboard() {
           api.getPricingTiers(),
           api.getMedSpaFinancialReport(user.medSpaId),
           api.getChatbotConfig(user.medSpaId),
-          api.getCorporateEngagement(user.medSpaId),
+          api.getMedSpaCorporateEngagement(user.medSpaId),
           api.getRecentInvoices(user.medSpaId),
           api.getCorporatePartners(user.medSpaId),
           api.getMedSpaEvents(user.medSpaId),
